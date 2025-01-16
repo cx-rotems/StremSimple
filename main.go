@@ -15,11 +15,11 @@ func processJob(job types.Job) {
     wg.Add(1)
     go func(job types.Job) {
         defer wg.Done()
-        jobWithResult1, _ := processors.NewMinioExtractor().Process(job)
-        jobWithResult2, _ := processors.NewEngineResultsRestructure().Process(jobWithResult1)
-        jobWithResult3, _ := processors.NewResultEnrichment().Process(jobWithResult2)
-        jobWithResult4, _ := processors.NewResultLoader().Process(jobWithResult3)
-        fmt.Printf("Job %d completed with %d result\n", job.ID, len(jobWithResult4.Results))
+        jobWithResult, _ := processors.NewMinioExtractor().Process(job)
+        jobWithResult, _ = processors.NewEngineResultsRestructure().Process(jobWithResult)
+        jobWithResult, _ = processors.NewResultEnrichment().Process(jobWithResult)
+        jobWithResult, _ = processors.NewResultLoader().Process(jobWithResult)
+        fmt.Printf("Job %d completed with %d result\n", job.ID, len(jobWithResult.Results))
     }(job)
 }
 
