@@ -18,7 +18,7 @@ func processJob(job types.Job) {
         jobWithResult1, _ := processors.NewMinioExtractor().Process(job)
         jobWithResult2, _ := processors.NewEngineResultsRestructure().Process(jobWithResult1)
         jobWithResult3, _ := processors.NewResultEnrichment().Process(jobWithResult2)
-        jobWithResult4, _ := processors.NewMinioExtractor().Process(jobWithResult3)
+        jobWithResult4, _ := processors.NewResultLoader().Process(jobWithResult3)
         fmt.Printf("Job %d completed with %d result\n", job.ID, len(jobWithResult4.Results))
     }(job)
 }
