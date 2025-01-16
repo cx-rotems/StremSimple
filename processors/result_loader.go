@@ -18,8 +18,6 @@ func NewResultLoader() *ResultLoader {
 func (rl *ResultLoader) Process(job types.Job) (types.Job, error)  {
 
 		//fmt.Printf("ResultLoader: Processing job ID %d\n", job.ID)
-
-		// Process results in transactions
 		transaction := make([]types.Result, 0, transactionSize)
 		for _, result := range job.Results {
 			transaction = append(transaction, result)

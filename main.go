@@ -2,14 +2,14 @@ package main
 
 import (
     "fmt"
-    "math/rand"
     "sync"
-    "time"
     "github.com/cx-rotems/StremSimple/types"
-	"github.com/cx-rotems/StremSimple/processors"
+    "github.com/cx-rotems/StremSimple/processors"
+    "time"
 )
 
 var wg sync.WaitGroup
+var start time.Time
 
 func processJob(job types.Job) {
     wg.Add(1)
@@ -19,19 +19,18 @@ func processJob(job types.Job) {
         jobWithResult, _ = processors.NewEngineResultsRestructure().Process(jobWithResult)
         jobWithResult, _ = processors.NewResultEnrichment().Process(jobWithResult)
         jobWithResult, _ = processors.NewResultLoader().Process(jobWithResult)
-        fmt.Printf("Job %d completed with %d result\n", job.ID, len(jobWithResult.Results))
+        if (jobWithResult.ID == 3) {
+            elapsed := time.Since(start)
+			fmt.Printf("Total time took %s\n", elapsed)
+        }
+        fmt.Printf("Job %d completed with %d results\n", job.ID, len(jobWithResult.Results))
     }(job)
 }
 
 func main() {
-    rand.Seed(time.Now().UnixNano())
-    jobID := 1
-
-    for {
-        processJob(types.Job{ID: jobID})
-        jobID++
-
-        // Sleep for a random duration between 1 and 5 seconds
-        time.Sleep(time.Duration(rand.Intn(5)+1) * time.Second)
+    start = time.Now()
+    for i := 1; i <= 3; i++ {
+        processJob(types.Job{ID: i})
     }
+    for { }
 }

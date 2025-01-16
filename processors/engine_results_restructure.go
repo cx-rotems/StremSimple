@@ -20,7 +20,7 @@ func (e *EngineResultsRestructure) Process(job types.Job) (types.Job, error) {
 
 		job.Results[i].CvssScores = fmt.Sprintf("%d", i*10)
 		time.Sleep(70 * time.Millisecond) // simulate restructure
-			//fmt.Printf("EngineResultsRestructure: Restructuring result for result ID %d and job ID  %d\n", job.Results[i].ResultID, job.Results[i].JobID)
+		//fmt.Printf("EngineResultsRestructure: Restructuring result for result ID %d and job ID  %d\n", job.Results[i].ResultID, job.Results[i].JobID)
 	}
 
     return job, nil
