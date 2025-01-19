@@ -4,6 +4,7 @@ import(
 	"time"
 	"fmt"
 	"github.com/cx-rotems/StremSimple/types"
+	"github.com/cx-rotems/StremSimple/consts"
 ) 
 
 // EngineResultsRestructure is a struct that represents the processor.
@@ -19,7 +20,7 @@ func (e *EngineResultsRestructure) Process(job types.Job) (types.Job, error) {
 	for i := 0; i < len(job.Results); i++ {
 
 		job.Results[i].CvssScores = fmt.Sprintf("%d", i*10)
-		time.Sleep(70 * time.Millisecond) // simulate restructure
+		time.Sleep(consts.EngineRestructureTime * time.Millisecond) // simulate restructure
 		//fmt.Printf("EngineResultsRestructure: Restructuring result for result ID %d and job ID  %d\n", job.Results[i].ResultID, job.Results[i].JobID)
 	}
 

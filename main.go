@@ -4,6 +4,7 @@ import (
     "fmt"
     "sync"
     "github.com/cx-rotems/StremSimple/types"
+    "github.com/cx-rotems/StremSimple/consts"
     "github.com/cx-rotems/StremSimple/processors"
     "time"
 )
@@ -19,7 +20,7 @@ func processJob(job types.Job) {
         jobWithResult, _ = processors.NewEngineResultsRestructure().Process(jobWithResult)
         jobWithResult, _ = processors.NewResultEnrichment().Process(jobWithResult)
         jobWithResult, _ = processors.NewResultLoader().Process(jobWithResult)
-        if (jobWithResult.ID == 3) {
+        if (jobWithResult.ID == consts.NumberOfThreads) {
             elapsed := time.Since(start)
 			fmt.Printf("Total time took %s\n", elapsed)
         }
@@ -29,7 +30,7 @@ func processJob(job types.Job) {
 
 func main() {
     start = time.Now()
-    for i := 1; i <= 3; i++ {
+    for i := 1; i <= consts.NumberOfThreads; i++ {
         processJob(types.Job{ID: i})
     }
     for { }

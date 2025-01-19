@@ -2,11 +2,10 @@ package processors
 
 import (
 	"fmt"
-	"github.com/cx-rotems/StremSimple/types"
 	"time"
+	"github.com/cx-rotems/StremSimple/types"
+	"github.com/cx-rotems/StremSimple/consts"
 )
-
-const transactionSize = 4
 
 type ResultLoader struct {
 }
@@ -18,11 +17,11 @@ func NewResultLoader() *ResultLoader {
 func (rl *ResultLoader) Process(job types.Job) (types.Job, error)  {
 
 		//fmt.Printf("ResultLoader: Processing job ID %d\n", job.ID)
-		transaction := make([]types.Result, 0, transactionSize)
+		transaction := make([]types.Result, 0, consts.TransactionSize)
 		for _, result := range job.Results {
 			transaction = append(transaction, result)
 
-			if len(transaction) == transactionSize {
+			if len(transaction) == consts.TransactionSize {
 				processTransaction(transaction)
 				transaction = transaction[:0]
 			}
