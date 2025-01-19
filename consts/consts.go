@@ -1,12 +1,16 @@
 package consts
 
 const (
-	NumberOfResult = 5000
+	//NumberOfResult = 5000
 	NumberOfThreads = 1
-	TransactionSize = 200 //LOADER_MAX_BUFF_ITEMS
+	NumberOfFiles = 3
+	NumberOfResultPerFile = 3
+
+	TransactionSize = 4 //LOADER_MAX_BUFF_ITEMS
 						 //PIPELINE_BUFFER_SIZE
-	MinioExtractTime = 100
-	EngineRestructureTime = 100
-	ResultEnrichmentTime = 100
+	MinioExtractTime = 2
+	MinioExtractFileTime = 3
+	EngineRestructureTime = 2
+	ResultEnrichmentTime = 2
 	ResultLoaderTransactionTime = 200
 )
