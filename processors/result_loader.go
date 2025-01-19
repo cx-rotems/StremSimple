@@ -1,8 +1,9 @@
 package processors
 
 import (
-	"fmt"
+	//"fmt"
 	"time"
+	"math"
 	"github.com/cx-rotems/StremSimple/types"
 	"github.com/cx-rotems/StremSimple/consts"
 )
@@ -40,12 +41,14 @@ func (rl *ResultLoader) Process(job types.Job) (types.Job, error)  {
 var transactionCounter int
 
 func processTransaction(transaction []types.Result) {
+	resultLoaderTransactionTime := int(math.Ceil(float64(len(transaction)) / 4.0))
+	
 	transactionCounter++
-	fmt.Printf("\nResultLoader: Saving transaction #%d (%d results)\n", transactionCounter, len(transaction))
-	fmt.Println("Results in this transaction:")
-	for i, result := range transaction {
-		fmt.Printf("  [%d] Result ID: %d, Job ID: %d\n",
-			i+1, result.ResultID, result.JobID)
+	//fmt.Printf("\nResultLoader: Saving transaction #%d (%d results)\n", transactionCounter, len(transaction))
+	//fmt.Println("Results in this transaction:")
+	for _, result := range transaction {
+		result = result
+
 	}
-	time.Sleep(30 * time.Millisecond)
+	time.Sleep(time.Duration(resultLoaderTransactionTime) * time.Millisecond)
 }
