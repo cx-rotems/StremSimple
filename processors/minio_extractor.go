@@ -1,35 +1,39 @@
 package processors
 
 import (
-	"time"
-//	"fmt"
-	"github.com/cx-rotems/StremSimple/types"
 	"github.com/cx-rotems/StremSimple/consts"
+	"time"
+	//	"fmt"
+	"github.com/cx-rotems/StremSimple/types"
 )
 
 type MinioExtractor struct {
 }
 
 func NewMinioExtractor() *MinioExtractor {
-	return &MinioExtractor{
-	}
+	return &MinioExtractor{}
 }
 
-func (me *MinioExtractor) Process(job types.Job) (types.Job, error) {
+func (me *MinioExtractor) Process(job types.Job) <-chan types.Result {
 	// Simulate extraction
-	files := getFiles(job)
-
-	resultID := 1;
-	 for range files{
-		for i := 1; i <= consts.NumberOfResultPerFile; i++ {
-			time.Sleep(consts.MinioExtractFileTime * time.Millisecond) // simulate parse each result
-			job.Results = append(job.Results, types.Result{ResultID: resultID, JobID: job.ID})
-			resultID++;
-		//	fmt.Printf("MinioExtractor: Downlaod result ID %d and job ID  %d\n",  job.Results[i].ResultID,  job.Results[i].JobID) 
+	out := make(chan types.Result)
+	go func() {
+		defer close(out)
+		files := getFiles(job)
+		resultID := 1
+		for range files {
+			for i := 1; i <= consts.NumberOfResultPerFile; i++ {
+				time.Sleep(consts.MinioExtractFileTime * time.Millisecond) // simulate parse each result
+				result := types.Result{ResultID: resultID, JobID: job.ID}
+				job.Results = append(job.Results, result)
+				resultID++
+				out <- result
+				//	fmt.Printf("MinioExtractor: Downlaod result ID %d and job ID  %d\n",  job.Results[i].ResultID,  job.Results[i].JobID)
+			}
 		}
-	}
+	}()
 
-	return  job, nil
+	return out
 }
 
 func getFiles(job types.Job) int {

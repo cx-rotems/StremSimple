@@ -1,11 +1,11 @@
 package processors
 
 import (
+	"github.com/cx-rotems/StremSimple/consts"
+	"github.com/cx-rotems/StremSimple/types"
+	"math"
 	//"fmt"
 	"time"
-	"math"
-	"github.com/cx-rotems/StremSimple/types"
-	"github.com/cx-rotems/StremSimple/consts"
 )
 
 type ResultLoader struct {
@@ -15,34 +15,37 @@ func NewResultLoader() *ResultLoader {
 	return &ResultLoader{}
 }
 
-func (rl *ResultLoader) Process(job types.Job) (types.Job, error)  {
+func (rl *ResultLoader) Process(scanResults <-chan types.Result) (int, error) {
 
-		//fmt.Printf("ResultLoader: Processing job ID %d\n", job.ID)
-		transaction := make([]types.Result, 0, consts.TransactionSize)
-		for _, result := range job.Results {
-			transaction = append(transaction, result)
+	//fmt.Printf("ResultLoader: Processing job ID %d\n", job.ID)
+	loaded := 0
+	transaction := make([]types.Result, 0, consts.TransactionSize)
 
-			if len(transaction) == consts.TransactionSize {
-				processTransaction(transaction)
-				transaction = transaction[:0]
-			}
-		}
+	for result := range scanResults {
+		transaction = append(transaction, result)
 
-		// Process remaining results if any
-		if len(transaction) > 0 {
+		if len(transaction) == consts.TransactionSize {
 			processTransaction(transaction)
+			transaction = transaction[:0]
 		}
+		loaded++
+	}
 
-		// Notify job completion
-		return job, nil
-	
+	// Process remaining results if any
+	if len(transaction) > 0 {
+		processTransaction(transaction)
+	}
+
+	// Notify job completion
+	return loaded, nil
+
 }
 
 var transactionCounter int
 
 func processTransaction(transaction []types.Result) {
 	resultLoaderTransactionTime := int(math.Ceil(float64(len(transaction)) / 4.0))
-	
+
 	transactionCounter++
 	//fmt.Printf("\nResultLoader: Saving transaction #%d (%d results)\n", transactionCounter, len(transaction))
 	//fmt.Println("Results in this transaction:")

@@ -1,26 +1,29 @@
 package processors
 
-import(
+import (
+	"github.com/cx-rotems/StremSimple/consts"
+	"github.com/cx-rotems/StremSimple/types"
 	//"fmt"
 	"time"
-	"github.com/cx-rotems/StremSimple/types"
-	"github.com/cx-rotems/StremSimple/consts"
-) 
+)
 
 type ResultEnrichment struct {
-
 }
 
 func NewResultEnrichment() *ResultEnrichment {
 	return &ResultEnrichment{}
 }
 
-func (e *ResultEnrichment) Process(job types.Job) (types.Job, error) {
-	for i := 0; i < len(job.Results); i++ {
-		job.Results[i].CvssScores = job.Results[i].CvssScores + " enrichment"
-		time.Sleep(consts.EngineRestructureTime * time.Millisecond) // simulate result enrichment
-		//fmt.Printf("ResultEnrichment: Enriching result for result ID %d and job ID  %d\n",  job.Results[i].ResultID,  job.Results[i].JobID) 	// simulate result enrichment
-	}
-
-    return job, nil
+func (e *ResultEnrichment) Process(scanResults <-chan types.Result) <-chan types.Result {
+	out := make(chan types.Result)
+	go func() {
+		defer close(out)
+		for result := range scanResults {
+			result.CvssScores = result.CvssScores + " enrichment"
+			time.Sleep(consts.EngineRestructureTime * time.Millisecond) // simulate result enrichment
+			//fmt.Printf("ResultEnrichment: Enriching result for result ID %d and job ID  %d\n",  job.Results[i].ResultID,  job.Results[i].JobID) 	// simulate result enrichment
+			out <- result
+		}
+	}()
+	return out
 }
